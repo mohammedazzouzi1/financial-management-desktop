@@ -1,23 +1,38 @@
-﻿using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using MizanFinance.App.ViewModels;
+using MizanFinance.App.Views;
+using Wpf.Ui.Controls;
 
 namespace MizanFinance.App;
 
-/// <summary>
-/// Interaction logic for MainWindow.xaml
-/// </summary>
-public partial class MainWindow : Window
+public partial class MainWindow : FluentWindow
 {
-    public MainWindow()
+    private readonly IServiceProvider _services;
+
+    public MainWindow(MainViewModel viewModel, IServiceProvider services)
     {
         InitializeComponent();
+        _services = services;
+        DataContext = viewModel;
+        viewModel.LogoutRequested += OnLogoutRequested;
+    }
+
+    private void OnLogoutRequested()
+    {
+        Hide();
+
+        var loginWindow = (LoginWindow)_services.GetService(typeof(LoginWindow))!;
+        var result = loginWindow.ShowDialog();
+        if (result == true)
+        {
+            var newMain = (MainWindow)_services.GetService(typeof(MainWindow))!;
+            System.Windows.Application.Current.MainWindow = newMain;
+            newMain.Show();
+        }
+        else
+        {
+            System.Windows.Application.Current.Shutdown();
+        }
+
+        Close();
     }
 }

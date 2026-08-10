@@ -43,8 +43,19 @@ public class AccountService : IAccountService
     public async Task UpdateAsync(Account account)
     {
         using var db = await _factory.CreateDbContextAsync();
-        account.ModifiedAt = DateTime.Now;
-        db.Accounts.Update(account);
+        var existing = await db.Accounts.FindAsync(account.Id)
+            ?? throw new InvalidOperationException("Account not found.");
+
+        existing.Name = account.Name;
+        existing.Type = account.Type;
+        existing.BankName = account.BankName;
+        existing.AccountNumber = account.AccountNumber;
+        existing.Iban = account.Iban;
+        existing.Currency = account.Currency;
+        existing.OpeningBalance = account.OpeningBalance;
+        existing.Notes = account.Notes;
+        existing.ModifiedAt = DateTime.Now;
+
         await db.SaveChangesAsync();
     }
 

@@ -1,0 +1,73 @@
+<ui:FluentWindow x:Class="MizanFinance.App.Views.LoginWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 xmlns:conv="clr-namespace:MizanFinance.App.Converters"
+                 Title="Mizan Finance"
+                 Width="960" Height="620"
+                 WindowStartupLocation="CenterScreen"
+                 ExtendsContentIntoTitleBar="True"
+                 WindowBackdropType="Mica"
+                 ResizeMode="CanMinimize">
+    <Grid>
+        <ui:TitleBar Title="" Grid.Row="0" VerticalAlignment="Top" ShowMaximize="False" ShowMinimize="True" />
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Background="{StaticResource MizanNavyBrush}">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Left" Margin="56,0,56,0">
+                    <TextBlock Text="Mizan Finance" FontSize="34" FontWeight="Bold" Foreground="White" />
+                    <TextBlock Text="Your finances. One clear view." FontSize="15" Foreground="#B7C4DA" Margin="0,10,0,0" />
+                    <TextBlock Text="Toute votre gestion financière, au même endroit." FontSize="12" Foreground="#8496B4" Margin="0,4,0,0" />
+
+                    <StackPanel Margin="0,48,0,0">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                            <ui:SymbolIcon Symbol="MoneyCalculator24" Foreground="#60A5FA" FontSize="20" />
+                            <TextBlock Text="Trésorerie, caisse et comptes bancaires en temps réel" Foreground="#DCE6F5" Margin="12,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                            <ui:SymbolIcon Symbol="ReceiptMoney24" Foreground="#60A5FA" FontSize="20" />
+                            <TextBlock Text="Transactions, factures et chèques centralisés" Foreground="#DCE6F5" Margin="12,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon Symbol="DataTrending24" Foreground="#60A5FA" FontSize="20" />
+                            <TextBlock Text="Rapports et analyses financières professionnels" Foreground="#DCE6F5" Margin="12,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Grid Grid.Column="1" Background="{DynamicResource ApplicationBackgroundBrush}">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="320">
+                    <TextBlock Text="Connexion" FontSize="24" FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}" Margin="0,0,0,4" />
+                    <TextBlock Text="Connectez-vous pour accéder à votre tableau de bord"
+                               FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,24" TextWrapping="Wrap" />
+
+                    <TextBlock Text="Nom d'utilisateur" FontSize="12" Margin="0,0,0,6"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                    <ui:TextBox x:Name="UsernameBox" PlaceholderText="admin"
+                                Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}"
+                                Margin="0,0,0,14" />
+
+                    <TextBlock Text="Mot de passe" FontSize="12" Margin="0,0,0,6"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                    <PasswordBox x:Name="PasswordBox" Margin="0,0,0,6" KeyDown="PasswordBox_KeyDown" />
+
+                    <TextBlock Text="{Binding ErrorMessage}"
+                               Foreground="{StaticResource MizanDangerBrush}"
+                               FontSize="12" TextWrapping="Wrap" Margin="0,8,0,0"
+                               Visibility="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyToVisibilityConverter}}" />
+
+                    <ui:Button Content="Se connecter" Appearance="Primary" Margin="0,20,0,0"
+                               HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                               Command="{Binding LoginCommand}" IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}, FallbackValue=True}" />
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Grid>
+</ui:FluentWindow>

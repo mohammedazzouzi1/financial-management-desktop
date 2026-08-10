@@ -1,0 +1,111 @@
+<UserControl x:Class="MizanFinance.App.Views.CashRegisterView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             Loaded="OnLoaded">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="32,24,32,32">
+        <StackPanel>
+            <Grid Margin="0,0,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Caisse" Style="{StaticResource PageTitleStyle}" />
+                    <TextBlock Text="Registre de caisse quotidien et rapprochement" Style="{StaticResource PageSubtitleStyle}" />
+                </StackPanel>
+                <ComboBox Grid.Column="1" Margin="0,0,12,0" Width="200" VerticalAlignment="Center"
+                          ItemsSource="{Binding CashAccounts}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedCashAccount}" />
+                <DatePicker Grid.Column="2" Width="150" VerticalAlignment="Center" SelectedDate="{Binding SelectedDate}" />
+            </Grid>
+
+            <Border Style="{StaticResource SectionCardStyle}" Margin="0,0,0,20">
+                <StackPanel>
+                    <TextBlock Text="Registre du jour" Style="{StaticResource SectionHeaderStyle}" Margin="0,0,0,16" />
+
+                    <UniformGrid Columns="4" Margin="0,0,0,20">
+                        <StackPanel Margin="0,0,16,0">
+                            <TextBlock Text="SOLDE D'OUVERTURE" Style="{StaticResource KpiLabelStyle}" />
+                            <TextBlock Text="{Binding TodaySummary.OpeningBalance, Converter={StaticResource CurrencyConverter}}"
+                                       FontSize="20" FontWeight="SemiBold" Margin="0,4,0,0" />
+                        </StackPanel>
+                        <StackPanel Margin="0,0,16,0">
+                            <TextBlock Text="ENTRÉES" Style="{StaticResource KpiLabelStyle}" />
+                            <TextBlock Text="{Binding TodaySummary.CashIn, Converter={StaticResource CurrencyConverter}}"
+                                       FontSize="20" FontWeight="SemiBold" Foreground="{StaticResource MizanSuccessBrush}" Margin="0,4,0,0" />
+                        </StackPanel>
+                        <StackPanel Margin="0,0,16,0">
+                            <TextBlock Text="SORTIES" Style="{StaticResource KpiLabelStyle}" />
+                            <TextBlock Text="{Binding TodaySummary.CashOut, Converter={StaticResource CurrencyConverter}}"
+                                       FontSize="20" FontWeight="SemiBold" Foreground="{StaticResource MizanDangerBrush}" Margin="0,4,0,0" />
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Text="SOLDE ATTENDU" Style="{StaticResource KpiLabelStyle}" />
+                            <TextBlock Text="{Binding TodaySummary.ExpectedClosingBalance, Converter={StaticResource CurrencyConverter}}"
+                                       FontSize="20" FontWeight="SemiBold" Foreground="{StaticResource MizanAccentBrush}" Margin="0,4,0,0" />
+                        </StackPanel>
+                    </UniformGrid>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="16" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Solde de clôture réel" FontSize="12" Margin="0,0,0,6" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                            <ui:NumberBox Value="{Binding ActualClosingBalanceInput, UpdateSourceTrigger=PropertyChanged}"
+                                          IsEnabled="{Binding TodaySummary.IsClosed, Converter={StaticResource InverseBooleanConverter}}" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Notes" FontSize="12" Margin="0,0,0,6" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                            <ui:TextBox Text="{Binding ClosingNotes, UpdateSourceTrigger=PropertyChanged}"
+                                        IsEnabled="{Binding TodaySummary.IsClosed, Converter={StaticResource InverseBooleanConverter}}" />
+                        </StackPanel>
+                    </Grid>
+
+                    <Border Margin="0,16,0,0" Padding="14,10" CornerRadius="8"
+                            Visibility="{Binding TodaySummary.IsClosed, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            Background="{StaticResource MizanWarningBrushLight}">
+                        <TextBlock Foreground="{StaticResource MizanWarningBrush}" FontWeight="SemiBold">
+                            <Run Text="Écart de caisse : " />
+                            <Run Text="{Binding TodaySummary.Discrepancy, Converter={StaticResource CurrencyConverter}, Mode=OneWay}" />
+                        </TextBlock>
+                    </Border>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                        <ui:Button Content="Clôturer la caisse" Appearance="Primary" Margin="0,0,10,0"
+                                   Command="{Binding CloseDayCommand}"
+                                   Visibility="{Binding TodaySummary.IsClosed, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                        <ui:Button Content="Rouvrir la caisse" Command="{Binding ReopenDayCommand}"
+                                   Visibility="{Binding TodaySummary.IsClosed, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource MizanSuccessBrush}" VerticalAlignment="Center" Margin="16,0,0,0" />
+                        <TextBlock Text="{Binding ErrorMessage}" Foreground="{StaticResource MizanDangerBrush}" VerticalAlignment="Center" Margin="16,0,0,0" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource SectionCardStyle}" Padding="0">
+                <StackPanel>
+                    <TextBlock Text="Historique (14 derniers jours)" Style="{StaticResource SectionHeaderStyle}" Margin="20,20,20,12" />
+                    <DataGrid ItemsSource="{Binding History}" AutoGenerateColumns="False" IsReadOnly="True"
+                              GridLinesVisibility="Horizontal" HeadersVisibility="Column" CanUserAddRows="False"
+                              BorderThickness="0" RowHeight="40">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Date" Binding="{Binding Date, StringFormat=dd/MM/yyyy}" Width="110" />
+                            <DataGridTextColumn Header="Ouverture" Binding="{Binding OpeningBalance, StringFormat={}{0:N2}}" Width="120" />
+                            <DataGridTextColumn Header="Entrées" Binding="{Binding CashIn, StringFormat={}{0:N2}}" Width="120" />
+                            <DataGridTextColumn Header="Sorties" Binding="{Binding CashOut, StringFormat={}{0:N2}}" Width="120" />
+                            <DataGridTextColumn Header="Attendu" Binding="{Binding ExpectedClosingBalance, StringFormat={}{0:N2}}" Width="120" />
+                            <DataGridTextColumn Header="Réel" Binding="{Binding ActualClosingBalance, StringFormat={}{0:N2}}" Width="120" />
+                            <DataGridTextColumn Header="Écart" Binding="{Binding Discrepancy, StringFormat={}{0:N2}}" Width="120" />
+                            <DataGridTextColumn Header="Statut" Binding="{Binding IsClosed}" Width="*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

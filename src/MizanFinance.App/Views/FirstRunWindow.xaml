@@ -1,0 +1,191 @@
+<ui:FluentWindow x:Class="MizanFinance.App.Views.FirstRunWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 xmlns:conv="clr-namespace:MizanFinance.App.Converters"
+                 Title="Mizan Finance — Configuration initiale"
+                 Width="760" Height="640"
+                 WindowStartupLocation="CenterScreen"
+                 ExtendsContentIntoTitleBar="True"
+                 WindowBackdropType="Mica"
+                 ResizeMode="CanMinimize">
+    <ui:FluentWindow.Resources>
+        <Style x:Key="StepLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Margin" Value="0,0,0,6" />
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+        </Style>
+        <Style TargetType="ui:TextBox">
+            <Setter Property="Margin" Value="0,0,0,14" />
+        </Style>
+        <Style TargetType="ui:NumberBox">
+            <Setter Property="Margin" Value="0,0,0,14" />
+        </Style>
+    </ui:FluentWindow.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0" Title="Mizan Finance — Configuration initiale" ShowMaximize="False" />
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,8,0,16">
+            <TextBlock Text="{Binding StepIndicatorText}" FontSize="12" FontWeight="Medium"
+                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+        </StackPanel>
+
+        <Border Grid.Row="2" Margin="48,0,48,0" Padding="0,0,0,20">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <Grid>
+                    <!-- Step 0: Company info -->
+                    <StackPanel Visibility="{Binding CurrentStepIndex, Converter={StaticResource IntEqualsToVisibilityConverter}, ConverterParameter=0}">
+                        <TextBlock Text="Informations sur l'entreprise" Style="{StaticResource SectionHeaderStyle}" Margin="0,0,0,4" />
+                        <TextBlock Text="Ces informations apparaîtront sur vos factures et rapports." Style="{StaticResource PageSubtitleStyle}" Margin="0,0,0,20" />
+
+                        <TextBlock Text="Nom de l'entreprise *" Style="{StaticResource StepLabel}" />
+                        <ui:TextBox Text="{Binding CompanyName, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="Ma Société SARL" />
+
+                        <TextBlock Text="Adresse" Style="{StaticResource StepLabel}" />
+                        <ui:TextBox Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBlock Text="Téléphone" Style="{StaticResource StepLabel}" />
+                        <ui:TextBox Text="{Binding Phone, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBlock Text="Email" Style="{StaticResource StepLabel}" />
+                        <ui:TextBox Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBlock Text="Identifiant fiscal (ICE / RC)" Style="{StaticResource StepLabel}" />
+                        <ui:TextBox Text="{Binding TaxId, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+
+                    <!-- Step 1: Currency -->
+                    <StackPanel Visibility="{Binding CurrentStepIndex, Converter={StaticResource IntEqualsToVisibilityConverter}, ConverterParameter=1}">
+                        <TextBlock Text="Devise par défaut" Style="{StaticResource SectionHeaderStyle}" Margin="0,0,0,4" />
+                        <TextBlock Text="La devise utilisée par défaut pour vos comptes et transactions." Style="{StaticResource PageSubtitleStyle}" Margin="0,0,0,20" />
+
+                        <ComboBox ItemsSource="{Binding AvailableCurrencies}" SelectedItem="{Binding SelectedCurrency}" Width="200" HorizontalAlignment="Left" />
+                    </StackPanel>
+
+                    <!-- Step 2: Admin account -->
+                    <StackPanel Visibility="{Binding CurrentStepIndex, Converter={StaticResource IntEqualsToVisibilityConverter}, ConverterParameter=2}">
+                        <TextBlock Text="Compte administrateur" Style="{StaticResource SectionHeaderStyle}" Margin="0,0,0,4" />
+                        <TextBlock Text="Créez le compte qui gérera l'application." Style="{StaticResource PageSubtitleStyle}" Margin="0,0,0,20" />
+
+                        <TextBlock Text="Nom complet *" Style="{StaticResource StepLabel}" />
+                        <ui:TextBox Text="{Binding AdminFullName, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBlock Text="Nom d'utilisateur *" Style="{StaticResource StepLabel}" />
+                        <ui:TextBox Text="{Binding AdminUsername, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBlock Text="Mot de passe *" Style="{StaticResource StepLabel}" />
+                        <PasswordBox x:Name="AdminPasswordBox" Margin="0,0,0,14" />
+
+                        <TextBlock Text="Confirmer le mot de passe *" Style="{StaticResource StepLabel}" />
+                        <PasswordBox x:Name="AdminPasswordConfirmBox" Margin="0,0,0,14" />
+                    </StackPanel>
+
+                    <!-- Step 3: Cash account -->
+                    <StackPanel Visibility="{Binding CurrentStepIndex, Converter={StaticResource IntEqualsToVisibilityConverter}, ConverterParameter=3}">
+                        <TextBlock Text="Compte de caisse" Style="{StaticResource SectionHeaderStyle}" Margin="0,0,0,4" />
+                        <TextBlock Text="Créez votre premier compte de caisse (espèces)." Style="{StaticResource PageSubtitleStyle}" Margin="0,0,0,20" />
+
+                        <TextBlock Text="Nom du compte *" Style="{StaticResource StepLabel}" />
+                        <ui:TextBox Text="{Binding CashAccountName, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBlock Text="Solde d'ouverture" Style="{StaticResource StepLabel}" />
+                        <ui:NumberBox Value="{Binding CashOpeningBalance, UpdateSourceTrigger=PropertyChanged}" Width="220" HorizontalAlignment="Left" />
+                    </StackPanel>
+
+                    <!-- Step 4: Bank account -->
+                    <StackPanel Visibility="{Binding CurrentStepIndex, Converter={StaticResource IntEqualsToVisibilityConverter}, ConverterParameter=4}">
+                        <TextBlock Text="Compte bancaire" Style="{StaticResource SectionHeaderStyle}" Margin="0,0,0,4" />
+                        <TextBlock Text="Ajoutez un compte bancaire, ou passez cette étape." Style="{StaticResource PageSubtitleStyle}" Margin="0,0,0,20" />
+
+                        <CheckBox Content="Ajouter un compte bancaire maintenant" IsChecked="{Binding IncludeBankAccount}" Margin="0,0,0,16" />
+
+                        <StackPanel IsEnabled="{Binding IncludeBankAccount}">
+                            <TextBlock Text="Nom du compte" Style="{StaticResource StepLabel}" />
+                            <ui:TextBox Text="{Binding BankAccountName, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <TextBlock Text="Banque" Style="{StaticResource StepLabel}" />
+                            <ui:TextBox Text="{Binding BankName, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <TextBlock Text="Numéro de compte" Style="{StaticResource StepLabel}" />
+                            <ui:TextBox Text="{Binding BankAccountNumber, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <TextBlock Text="IBAN" Style="{StaticResource StepLabel}" />
+                            <ui:TextBox Text="{Binding BankIban, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <TextBlock Text="Solde d'ouverture" Style="{StaticResource StepLabel}" />
+                            <ui:NumberBox Value="{Binding BankOpeningBalance, UpdateSourceTrigger=PropertyChanged}" Width="220" HorizontalAlignment="Left" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Step 5: Categories -->
+                    <StackPanel Visibility="{Binding CurrentStepIndex, Converter={StaticResource IntEqualsToVisibilityConverter}, ConverterParameter=5}">
+                        <TextBlock Text="Catégories financières" Style="{StaticResource SectionHeaderStyle}" Margin="0,0,0,4" />
+                        <TextBlock Text="Un ensemble de catégories de revenus et de dépenses a été préconfiguré. Vous pourrez les modifier à tout moment dans Paramètres." Style="{StaticResource PageSubtitleStyle}" TextWrapping="Wrap" Margin="0,0,0,20" />
+
+                        <WrapPanel>
+                            <Border Style="{StaticResource StatusBadgeBase}" Background="{StaticResource MizanSuccessBrushLight}" Margin="0,0,8,8">
+                                <TextBlock Text="Ventes" Foreground="{StaticResource MizanSuccessBrush}" FontSize="12" />
+                            </Border>
+                            <Border Style="{StaticResource StatusBadgeBase}" Background="{StaticResource MizanSuccessBrushLight}" Margin="0,0,8,8">
+                                <TextBlock Text="Prestations de services" Foreground="{StaticResource MizanSuccessBrush}" FontSize="12" />
+                            </Border>
+                            <Border Style="{StaticResource StatusBadgeBase}" Background="{StaticResource MizanDangerBrushLight}" Margin="0,0,8,8">
+                                <TextBlock Text="Loyer" Foreground="{StaticResource MizanDangerBrush}" FontSize="12" />
+                            </Border>
+                            <Border Style="{StaticResource StatusBadgeBase}" Background="{StaticResource MizanDangerBrushLight}" Margin="0,0,8,8">
+                                <TextBlock Text="Salaires" Foreground="{StaticResource MizanDangerBrush}" FontSize="12" />
+                            </Border>
+                            <Border Style="{StaticResource StatusBadgeBase}" Background="{StaticResource MizanDangerBrushLight}" Margin="0,0,8,8">
+                                <TextBlock Text="Achats" Foreground="{StaticResource MizanDangerBrush}" FontSize="12" />
+                            </Border>
+                            <Border Style="{StaticResource StatusBadgeBase}" Background="{StaticResource MizanDangerBrushLight}" Margin="0,0,8,8">
+                                <TextBlock Text="Transport" Foreground="{StaticResource MizanDangerBrush}" FontSize="12" />
+                            </Border>
+                            <Border Style="{StaticResource StatusBadgeBase}" Background="{StaticResource MizanDangerBrushLight}" Margin="0,0,8,8">
+                                <TextBlock Text="+ 6 autres" Foreground="{StaticResource MizanDangerBrush}" FontSize="12" />
+                            </Border>
+                        </WrapPanel>
+                    </StackPanel>
+
+                    <!-- Step 6: Finish -->
+                    <StackPanel Visibility="{Binding CurrentStepIndex, Converter={StaticResource IntEqualsToVisibilityConverter}, ConverterParameter=6}">
+                        <TextBlock Text="Prêt à démarrer" Style="{StaticResource SectionHeaderStyle}" Margin="0,0,0,4" />
+                        <TextBlock Text="Votre application est configurée. Vous pouvez charger des données de démonstration pour découvrir l'application." Style="{StaticResource PageSubtitleStyle}" TextWrapping="Wrap" Margin="0,0,0,20" />
+
+                        <CheckBox Content="Charger des données de démonstration (clients, fournisseurs, transactions)" IsChecked="{Binding LoadDemoData}" />
+                    </StackPanel>
+                </Grid>
+            </ScrollViewer>
+        </Border>
+
+        <Grid Grid.Row="3" Margin="48,0,48,24">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0" Text="{Binding ErrorMessage}" Foreground="{StaticResource MizanDangerBrush}"
+                       VerticalAlignment="Center" TextWrapping="Wrap" MaxWidth="360" HorizontalAlignment="Left"
+                       Visibility="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyToVisibilityConverter}}" />
+
+            <ui:Button Grid.Column="1" Content="Annuler" Margin="0,0,8,0" Command="{Binding CancelCommand}" />
+            <ui:Button Grid.Column="2" Content="Précédent" Margin="0,0,8,0" Command="{Binding BackCommand}"
+                       Visibility="{Binding IsFirstStep, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+            <ui:Button Grid.Column="3" Content="Suivant" Appearance="Primary" Command="{Binding NextCommand}"
+                       Visibility="{Binding IsLastStep, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+            <ui:Button Grid.Column="3" Content="Terminer" Appearance="Primary" Command="{Binding FinishCommand}"
+                       Visibility="{Binding IsLastStep, Converter={StaticResource BooleanToVisibilityConverter}}"
+                       IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}, FallbackValue=True}" />
+        </Grid>
+    </Grid>
+</ui:FluentWindow>
