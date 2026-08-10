@@ -21,6 +21,15 @@ public partial class App : System.Windows.Application
     {
         base.OnStartup(e);
 
+        // The app moves through several dialogs (first-run wizard -> login -> main window)
+        // via ShowDialog()/Show() before a "real" main window exists. With the default
+        // ShutdownMode (OnLastWindowClose), the moment the login window closes there is a
+        // brief instant where zero windows are open, which makes WPF auto-shutdown the
+        // whole application before the next window (MainWindow) gets shown. We take
+        // explicit control of shutdown instead and call Shutdown() ourselves at every
+        // real exit point (see below and MainWindow.xaml.cs).
+        ShutdownMode = ShutdownMode.OnExplicitShutdown;
+
         ApplicationThemeManager.Apply(ApplicationTheme.Light);
 
         var services = new ServiceCollection();
@@ -57,6 +66,10 @@ public partial class App : System.Windows.Application
             var mainWindow = Services.GetRequiredService<MainWindow>();
             MainWindow = mainWindow;
             mainWindow.Show();
+
+            // Now that a real main window is up, restore normal "close the app when its
+            // main window closes" behavior for the rest of the session.
+            ShutdownMode = ShutdownMode.OnMainWindowClose;
         }
         catch (Exception ex)
         {
