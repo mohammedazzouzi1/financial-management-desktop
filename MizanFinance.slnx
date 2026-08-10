@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/MizanFinance.App/MizanFinance.App.csproj" />
+    <Project Path="src/MizanFinance.Core/MizanFinance.Core.csproj" />
+    <Project Path="src/MizanFinance.Data/MizanFinance.Data.csproj" />
+  </Folder>
+</Solution>
