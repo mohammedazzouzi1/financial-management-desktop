@@ -38,15 +38,6 @@
                 <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource MizanSuccessBrush}" VerticalAlignment="Center" />
                 <TextBlock Text="{Binding ErrorMessage}" Foreground="{StaticResource MizanDangerBrush}" VerticalAlignment="Center" />
             </StackPanel>
-
-            <Border Style="{StaticResource SectionCardStyle}">
-                <StackPanel>
-                    <TextBlock Text="Données de démonstration" Style="{StaticResource SectionHeaderStyle}" Margin="0,0,0,8" />
-                    <TextBlock Text="Supprime tous les clients, fournisseurs et transactions de démonstration chargés lors de la configuration initiale. Les comptes sont conservés avec leur solde d'ouverture."
-                               TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" FontSize="12" Margin="0,0,0,16" />
-                    <ui:Button Content="Supprimer les données de démonstration" Command="{Binding RemoveDemoDataCommand}" HorizontalAlignment="Left" />
-                </StackPanel>
-            </Border>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

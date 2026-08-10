@@ -158,9 +158,7 @@
                     <!-- Step 6: Finish -->
                     <StackPanel Visibility="{Binding CurrentStepIndex, Converter={StaticResource IntEqualsToVisibilityConverter}, ConverterParameter=6}">
                         <TextBlock Text="Prêt à démarrer" Style="{StaticResource SectionHeaderStyle}" Margin="0,0,0,4" />
-                        <TextBlock Text="Votre application est configurée. Vous pouvez charger des données de démonstration pour découvrir l'application." Style="{StaticResource PageSubtitleStyle}" TextWrapping="Wrap" Margin="0,0,0,20" />
-
-                        <CheckBox Content="Charger des données de démonstration (clients, fournisseurs, transactions)" IsChecked="{Binding LoadDemoData}" />
+                        <TextBlock Text="Votre application est configurée avec un tableau de bord entièrement vierge. Vous pourrez ajouter vos clients, fournisseurs et transactions réels dès l'ouverture." Style="{StaticResource PageSubtitleStyle}" TextWrapping="Wrap" Margin="0,0,0,20" />
                     </StackPanel>
                 </Grid>
             </ScrollViewer>

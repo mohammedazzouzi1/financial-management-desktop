@@ -3,9 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using MizanFinance.Core.Entities;
 using MizanFinance.Core.Enums;
 using MizanFinance.Core.Interfaces;
-using MizanFinance.Data;
-using MizanFinance.Data.Seed;
-using Microsoft.EntityFrameworkCore;
 
 namespace MizanFinance.App.ViewModels;
 
@@ -14,18 +11,15 @@ public partial class FirstRunViewModel : ObservableObject
     private readonly ISettingsService _settingsService;
     private readonly IAuthService _authService;
     private readonly IAccountService _accountService;
-    private readonly IDbContextFactory<MizanDbContext> _dbContextFactory;
 
     public FirstRunViewModel(
         ISettingsService settingsService,
         IAuthService authService,
-        IAccountService accountService,
-        IDbContextFactory<MizanDbContext> dbContextFactory)
+        IAccountService accountService)
     {
         _settingsService = settingsService;
         _authService = authService;
         _accountService = accountService;
-        _dbContextFactory = dbContextFactory;
     }
 
     public List<CurrencyCode> AvailableCurrencies { get; } = Enum.GetValues<CurrencyCode>().ToList();
@@ -71,7 +65,7 @@ public partial class FirstRunViewModel : ObservableObject
     [ObservableProperty] private decimal cashOpeningBalance;
 
     // Step 5: Bank account (optional)
-    [ObservableProperty] private bool includeBankAccount = true;
+    [ObservableProperty] private bool includeBankAccount;
     [ObservableProperty] private string bankAccountName = "Compte Principal";
     [ObservableProperty] private string bankName = string.Empty;
     [ObservableProperty] private string bankAccountNumber = string.Empty;
@@ -80,7 +74,6 @@ public partial class FirstRunViewModel : ObservableObject
 
     // Step 6: Categories (informational — defaults already seeded)
     // Step 7: Finish
-    [ObservableProperty] private bool loadDemoData = true;
 
     public bool IsFinished { get; private set; }
 
@@ -157,7 +150,7 @@ public partial class FirstRunViewModel : ObservableObject
             await _settingsService.UpdateSettingsAsync(settings);
 
             var password = AdminPasswordAccessor?.Invoke() ?? "admin";
-            var admin = await _authService.CreateUserAsync(
+            await _authService.CreateUserAsync(
                 AdminUsername.Trim(), password, AdminFullName.Trim(), UserRole.Administrator, Email);
 
             await _accountService.CreateAsync(new Account
@@ -182,11 +175,6 @@ public partial class FirstRunViewModel : ObservableObject
                     OpeningBalance = BankOpeningBalance,
                     IsActive = true
                 });
-            }
-
-            if (LoadDemoData)
-            {
-                await DemoDataSeeder.SeedAsync(_dbContextFactory, admin.Username);
             }
 
             IsFinished = true;
